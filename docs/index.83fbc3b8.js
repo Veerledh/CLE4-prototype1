@@ -566,7 +566,6 @@ class App {
         );
     }
     onClick() {
-        console.log('YOO');
         document.getElementsByTagName('canvas')[0].remove();
         new _game.Game();
     }
@@ -37076,98 +37075,34 @@ parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "Game", ()=>Game
 );
 var _pixiJs = require("pixi.js");
-var _fishPng = require("./images/fish.png");
-var _fishPngDefault = parcelHelpers.interopDefault(_fishPng);
-var _bubblePng = require("./images/bubble.png");
-var _bubblePngDefault = parcelHelpers.interopDefault(_bubblePng);
-var _waterJpg = require("./images/water.jpg");
-var _waterJpgDefault = parcelHelpers.interopDefault(_waterJpg);
-var _fish = require("./fish");
-var _keyboardFish = require("./keyboardFish");
+var _backgroundPng = require("./images/background.png");
+var _backgroundPngDefault = parcelHelpers.interopDefault(_backgroundPng);
 class Game {
-    // settings
     pixiWidth = 800;
     pixiHeight = 450;
-    /**
-     * Constructor
-     * 
-     * Initialize Pixi
-     * Load assets
-     */ constructor(){
-        this.fishes = [];
+    constructor(){
         this.pixi = new _pixiJs.Application({
             width: this.pixiWidth,
             height: this.pixiHeight
-        }); //vullen van pixi application 
+        });
         this.pixi.stage.interactive = true;
         this.pixi.stage.hitArea = this.pixi.renderer.screen;
         document.body.appendChild(this.pixi.view);
         this.loader = new _pixiJs.Loader();
-        this.loader.add('fishTexture', _fishPngDefault.default).add('bubbleTexture', _bubblePngDefault.default).add('waterTexture', _waterJpgDefault.default);
+        this.loader.add('waterTexture', _backgroundPngDefault.default);
         this.loader.load(()=>this.loadCompleted()
         );
     }
-    gameOver() {
-        console.log("game over");
-        this.pixi.stop();
-        this.gameOverButton = new _pixiJs.Sprite(_pixiJs.Texture.WHITE) // jouw eigen sprite hier
-        ;
-        this.gameOverButton.width = 100;
-        this.gameOverButton.height = 50;
-        this.gameOverButton.x = 400;
-        this.gameOverButton.y = 200;
-        this.gameOverButton.interactive = true;
-        this.gameOverButton.buttonMode = true;
-        this.gameOverButton.on('pointerdown', ()=>this.resetGame()
-        );
-        this.pixi.stage.addChild(this.gameOverButton);
-    }
-    resetGame() {
-        console.log("gelukt");
-    }
-    /**
-     * Load Completed
-     * 
-     * Runs after assets loaded
-     * Creates background
-     * Creates bubbles
-     * Creates fishes
-     */ loadCompleted() {
+    loadCompleted() {
         let water = new _pixiJs.Sprite(this.loader.resources["waterTexture"].texture);
         water.height = this.pixiHeight;
         water.width = this.pixiWidth;
         this.pixi.stage.addChild(water);
-        for(let i = 0; i < 5; i++){
-            let temp = new _fish.Fish(this.loader.resources["fishTexture"].texture, this);
-            this.pixi.stage.addChild(temp);
-            this.fishes.push(temp);
-        }
-        this.keyboardFish = new _keyboardFish.KeyboardFish(this.loader.resources["fishTexture"].texture, this);
-        this.pixi.stage.addChild(this.keyboardFish);
-        this.pixi.ticker.add((delta)=>this.update(delta)
-        );
-    }
-    /**
-     * Update
-     * @param delta 
-     * 
-     * Updates fishes & bubbles
-     */ update(delta) {
-        this.keyboardFish.update(delta);
-        for(let f = 0; f < this.fishes.length; f++){
-            this.fishes[f].update(delta);
-            if (this.collision(this.keyboardFish, this.fishes[f])) console.log("keyboard fish touches normal fish 💀");
-        }
-    }
-    collision(sprite1, sprite2) {
-        const bounds1 = sprite1.getBounds();
-        const bounds2 = sprite2.getBounds();
-        return bounds1.x < bounds2.x + bounds2.width && bounds1.x + bounds1.width > bounds2.x && bounds1.y < bounds2.y + bounds2.height && bounds1.y + bounds1.height > bounds2.y;
     }
 }
 
-},{"pixi.js":"dsYej","./images/fish.png":"85Hm7","./images/bubble.png":"2T1dM","./images/water.jpg":"74aSm","./fish":"7VsCH","./keyboardFish":"ciGjB","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"85Hm7":[function(require,module,exports) {
-module.exports = require('./helpers/bundle-url').getBundleURL('FLaer') + "fish.510b053c.png" + "?" + Date.now();
+},{"pixi.js":"dsYej","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./images/background.png":"6zfLI"}],"6zfLI":[function(require,module,exports) {
+module.exports = require('./helpers/bundle-url').getBundleURL('FLaer') + "background.84053517.png" + "?" + Date.now();
 
 },{"./helpers/bundle-url":"lgJ39"}],"lgJ39":[function(require,module,exports) {
 "use strict";
@@ -37203,91 +37138,7 @@ exports.getBundleURL = getBundleURLCached;
 exports.getBaseURL = getBaseURL;
 exports.getOrigin = getOrigin;
 
-},{}],"2T1dM":[function(require,module,exports) {
-module.exports = require('./helpers/bundle-url').getBundleURL('FLaer') + "bubble.56ab0ad6.png" + "?" + Date.now();
-
-},{"./helpers/bundle-url":"lgJ39"}],"74aSm":[function(require,module,exports) {
-module.exports = require('./helpers/bundle-url').getBundleURL('FLaer') + "water.59ff4e4f.jpg" + "?" + Date.now();
-
-},{"./helpers/bundle-url":"lgJ39"}],"7VsCH":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "Fish", ()=>Fish
-);
-var _pixiJs = require("pixi.js");
-class Fish extends _pixiJs.Sprite {
-    constructor(texture, game){
-        super(texture); // new PIXI.Sprite()
-        this.game = game;
-        this.anchor.set(0.5);
-        this.y = 100;
-        this.tint = Math.random() * 16711680;
-        this.x = Math.random() * 800;
-        this.y = Math.random() * 450;
-    }
-    update(delta) {
-        this.x -= delta * 1;
-        if (this.x < 0 - this.width) {
-            // finish
-            // this.game.finish();
-            this.x = 800;
-            this.y = Math.random() * 450;
-        }
-    }
-    onKeyDown(e) {
-        switch(e.key.toUpperCase()){
-            case "P":
-                console.log("pause");
-                let burn = new _pixiJs.Sprite(this.bones);
-                burn.scale.set(0.42);
-                this.pixi.stage.addChild(burn);
-        }
-    }
-}
-
-},{"pixi.js":"dsYej","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ciGjB":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "KeyboardFish", ()=>KeyboardFish
-);
-var _fish = require("./fish");
-class KeyboardFish extends _fish.Fish {
-    speed = 6;
-    constructor(texture, game){
-        super(texture, game);
-        window.addEventListener("keydown", (e)=>this.onKeyDown(e)
-        );
-        window.addEventListener("keyup", (e)=>this.onKeyUp(e)
-        );
-    }
-    onKeyUp(e) {
-    // console.log('keyup');
-    }
-    onKeyDown(e) {
-        // console.log(e.key.toUpperCase());
-        switch(e.key.toUpperCase()){
-            case "W":
-            case "ARROWUP":
-                this.y -= this.speed;
-                break;
-            case "S":
-            case "ARROWDOWN":
-                this.y += this.speed;
-                break;
-            case "A":
-            case "ARROWLEFT":
-                this.x -= this.speed;
-                break;
-            case "D":
-            case "ARROWRIGHT":
-                this.x += this.speed;
-                break;
-        }
-    }
-    update(delta) {}
-}
-
-},{"./fish":"7VsCH","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"1ecxu":[function(require,module,exports) {
+},{}],"1ecxu":[function(require,module,exports) {
 module.exports = require('./helpers/bundle-url').getBundleURL('FLaer') + "start.6da236f6.jpg" + "?" + Date.now();
 
 },{"./helpers/bundle-url":"lgJ39"}],"eVDTG":[function(require,module,exports) {
